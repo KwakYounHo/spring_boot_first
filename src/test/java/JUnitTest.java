@@ -12,4 +12,14 @@ public class JUnitTest {
 
         Assertions.assertEquals(sum, a + b);
     }
+
+//    @DisplayName("1 + 2 = 4")
+//    @Test
+//    public void junitFailedTest() {
+//        int a = 1;
+//        int b = 3;
+//        int sum = 3;
+//
+//        Assertions.assertEquals(sum, a + b);
+//    }
 }
