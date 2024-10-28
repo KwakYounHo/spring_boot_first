@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Entity
+@Entity // (name="table_name") 입력시 해당 데이터 테이블과 매핑
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
