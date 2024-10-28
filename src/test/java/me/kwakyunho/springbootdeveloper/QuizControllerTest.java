@@ -13,7 +13,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Map;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -74,5 +77,47 @@ class QuizControllerTest {
                 .andExpect(content().string("Bad Request!"));
 
     }
+
+    @DisplayName("quiz() : POST('quiz?code=1') 이면, 응답코드는 403, 응답 본문은 'Forbidden'를 리턴")
+    @Test
+    public void postQuiz1() throws Exception {
+        // given
+        String url = "/quiz";
+
+        // when
+        ResultActions result = mockMvc
+                .perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new Code(1)))
+                );
+
+        // then
+        result
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Forbidden")
+                );
+
+    }
+
+    @DisplayName("quiz() : POST('quiz?code=13') 이면, 응답코드는 200, 본문 응답은 'OK!' 를 리턴")
+    @Test
+    public void postQuiz13() throws Exception{
+        // given
+        String url = "/quiz";
+
+        // when
+        ResultActions result = mockMvc
+                .perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new Code(13)))
+                );
+
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(content().string("OK!"));
+
+    }
+
 
 }
