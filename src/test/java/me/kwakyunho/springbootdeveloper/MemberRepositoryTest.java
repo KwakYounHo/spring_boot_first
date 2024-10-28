@@ -57,19 +57,30 @@ class MemberRepositoryTest {
 //        assertThat(memberRepository.findById(1L).get().getName()).isEqualTo("Yun");
 //    }
 
+//    @Test
+//    void saveAllMembers() {
+//        // given
+//        List<Member> members = List.of(
+//                new Member(2L, "Kwak"),
+//                new Member(3L, "Yun"),
+//                new Member(4L, "Ho")
+//        );
+//
+//        // when
+//        memberRepository.saveAll(members);
+//
+//        // given
+//        assertThat(memberRepository.findAll().size()).isEqualTo(3);
+//    }
+
+    @Sql("/insert-members.sql")
     @Test
-    void saveAllMembers() {
-        // given
-        List<Member> members = List.of(
-                new Member(2L, "Kwak"),
-                new Member(3L, "Yun"),
-                new Member(4L, "Ho")
-        );
-
+    void deleteMember() {
         // when
-        memberRepository.saveAll(members);
+        memberRepository.deleteById(2L);
 
         // given
-        assertThat(memberRepository.findAll().size()).isEqualTo(3);
+        assertThat(memberRepository.findById(2L).isEmpty()).isTrue();
+        assertThat(memberRepository.findAll().size()).isEqualTo(2);
     }
 }
