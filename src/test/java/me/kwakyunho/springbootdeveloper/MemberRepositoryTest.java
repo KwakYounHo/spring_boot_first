@@ -73,14 +73,24 @@ class MemberRepositoryTest {
 //        assertThat(memberRepository.findAll().size()).isEqualTo(3);
 //    }
 
+//    @Sql("/insert-members.sql")
+//    @Test
+//    void deleteMember() {
+//        // when
+//        memberRepository.deleteById(2L);
+//
+//        // given
+//        assertThat(memberRepository.findById(2L).isEmpty()).isTrue();
+//        assertThat(memberRepository.findAll().size()).isEqualTo(2);
+//    }
+
     @Sql("/insert-members.sql")
     @Test
-    void deleteMember() {
+    void deleteAllMembers() {
         // when
-        memberRepository.deleteById(2L);
+        memberRepository.deleteAll();
 
         // given
-        assertThat(memberRepository.findById(2L).isEmpty()).isTrue();
-        assertThat(memberRepository.findAll().size()).isEqualTo(2);
+        assertThat(memberRepository.findAll().size()).isZero();
     }
 }
