@@ -18,4 +18,8 @@ public class Member {
 
     @Column(name = "name", nullable = false)
     private String name; // Matches the 'name' column in the database table
+
+    public void changeName(String name) {
+        this.name = name;
+    }
 }

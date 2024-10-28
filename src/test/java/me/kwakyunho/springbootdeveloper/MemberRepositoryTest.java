@@ -1,5 +1,6 @@
 package me.kwakyunho.springbootdeveloper;
 
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -98,5 +99,18 @@ class MemberRepositoryTest {
 
         // given
         assertThat(memberRepository.findAll().size()).isZero();
+    }
+
+    @Sql("/insert-members.sql")
+    @Test
+    void updateMember() {
+        // giben
+        Member member = memberRepository.findById(2L).get();
+
+        // when
+        member.changeName("BC");
+
+        // then
+        assertThat(member.getName()).isEqualTo("BC");
     }
 }
