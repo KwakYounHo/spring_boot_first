@@ -45,9 +45,9 @@ class BlogApiControllerTest {
 
     private final String url = "/api/articles";
 
-    @DisplayName("JSON 문자열을 요청 본문에 전달, 201, 본문 반환")
+    @DisplayName("POST(/api/articles) : addArticle() -> JSON 문자열을 요청 본문에 전달, 201, 본문 반환")
     @Test
-    public void controllerTest1() throws Exception {
+    public void addArticleTest1() throws Exception {
         // given
         String requestBody = "{\"title\":\"기사 제목\", \"content\":\"기사 내용\"}";
 
@@ -64,9 +64,9 @@ class BlogApiControllerTest {
                 .andExpect(jsonPath("$.title").value("기사 제목"));
     }
 
-    @DisplayName("객체를 직렬화 하여 요청, 아티클 레포지토리의 길이 및 0번째 데이터가 일치하는지 확인")
+    @DisplayName("POST(/api/articles) : addArticle() -> 객체를 직렬화 하여 요청, 아티클 레포지토리의 길이 및 0번째 데이터가 일치하는지 확인")
     @Test
-    public void controllerTest2() throws Exception {
+    public void addArticleTest2() throws Exception {
         // given
         String title = "title";
         String content = "content";

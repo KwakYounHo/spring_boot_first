@@ -46,7 +46,7 @@ class BlogServiceTest {
         blogRepository.deleteAll();
     }
 
-    @DisplayName("findAll() 메서드 실행 반환값 확인")
+    @DisplayName("GET(/api/articles) : findAll() -> 반환값 확인")
     @Test
     public void findAllTest() throws Exception {
         // given
