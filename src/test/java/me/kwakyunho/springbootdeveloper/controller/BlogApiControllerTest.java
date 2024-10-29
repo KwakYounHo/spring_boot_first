@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -87,5 +88,35 @@ class BlogApiControllerTest {
 
         assertThat(articles.size()).isEqualTo(1);
         assertThat(articles.get(0).getContent()).isEqualTo(content);
+    }
+
+    @DisplayName("GET(/api/articles) : findAllArticles() -> List<ResponseArticle>")
+    @Test
+    public void findAllArticlesTest() throws Exception {
+        // given
+        AddArticleRequest request1 = new AddArticleRequest("제목1", "내용1");
+        AddArticleRequest request2 = new AddArticleRequest("제목2", "내용2");
+        AddArticleRequest request3 = new AddArticleRequest("제목3", "내용3");
+
+        String requestBody1 = objectMapper.writeValueAsString(request1);
+        String requestBody2 = objectMapper.writeValueAsString(request2);
+        String requestBody3 = objectMapper.writeValueAsString(request3);
+
+        // when
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestBody1));
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestBody2));
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestBody3));
+
+        ResultActions result = mockMvc
+                .perform(get(url)
+                        .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value(request1.getTitle()))
+                .andExpect(jsonPath("$[1].title").value(request2.getTitle()))
+                .andExpect(jsonPath("$[2].title").value(request3.getTitle()))
+                .andExpect(jsonPath("$.length()").value(3));
     }
 }
