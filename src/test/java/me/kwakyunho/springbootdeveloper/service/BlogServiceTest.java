@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -40,10 +41,14 @@ class BlogServiceTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @BeforeEach
     public void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
         blogRepository.deleteAll();
+        jdbcTemplate.execute("ALTER TABLE article ALTER COLUMN id RESTART WITH 1");
     }
 
     @DisplayName("GET(/api/articles) : findAll() -> 반환값 확인")
@@ -66,4 +71,23 @@ class BlogServiceTest {
         assertThat(articles.get(0).getContent()).isEqualTo(userRequest.getContent());
     }
 
+    @DisplayName("GET(/api/articles/{id} : findById() -> 반환값 확인")
+    @Test
+    public void findById() throws Exception {
+        // given
+        AddArticleRequest userRequest = new AddArticleRequest("제목1", "내용1");
+        Article savedArticle = blogService.save(userRequest);
+
+        // when
+        Article selectedArticle = blogService.findById(savedArticle.getId());
+        try {
+            Article article = blogService.findById(100L);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // then
+        assertThat(selectedArticle.getTitle()).isEqualTo(userRequest.getTitle());
+        assertThat(selectedArticle.getContent()).isEqualTo(userRequest.getContent());
+    }
 }
