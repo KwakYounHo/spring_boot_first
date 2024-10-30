@@ -10,17 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -56,11 +53,7 @@ class BlogServiceTest {
     public void findAllTest() throws Exception {
         // given
         AddArticleRequest userRequest = new AddArticleRequest("테스트용1 제목", "테스트용1 내용");  // 테스트용 객체 생성
-        String requestBody = objectMapper.writeValueAsString(userRequest);  // json으로 직렬화
-        ResultActions result = mockMvc  // 요청 전달
-                .perform(post("/api/articles")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(requestBody));
+        blogService.save(userRequest);
 
         // when
         List<Article> articles = blogService.findAll();
