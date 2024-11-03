@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -42,10 +44,14 @@ class BlogApiControllerTest {
     @Autowired
     private BlogService blogService;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @BeforeEach
     public void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
         blogRepository.deleteAll();
+        jdbcTemplate.execute("ALTER TABLE article ALTER COLUMN id RESTART WITH 1");
     }
 
     private final String url = "/api/articles";
@@ -100,5 +106,23 @@ class BlogApiControllerTest {
                 .andExpect(jsonPath("$[1].title").value(request2.getTitle()))
                 .andExpect(jsonPath("$[2].title").value(request3.getTitle()))
                 .andExpect(jsonPath("$.length()").value(3));
+    }
+
+    @DisplayName("DELETE(api/articles/{id} : delete() -> void")
+    @Test
+    public void deleteArticleTest() throws Exception {
+        // given
+        AddArticleRequest requestArticle = new AddArticleRequest("name", "content");
+        blogService.save(requestArticle);
+        long targetId = 1L;
+
+        // when
+        mockMvc.perform(delete("/api/articles/"+targetId))
+                .andExpect(status().isOk());
+
+        List<Article> result = blogService.findAll();
+
+        // then
+        assertThat(result).isEmpty();
     }
 }
