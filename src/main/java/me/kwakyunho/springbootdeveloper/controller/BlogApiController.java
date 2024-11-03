@@ -40,7 +40,7 @@ public class BlogApiController {
     }
 
     @GetMapping("/api/articles/{id}")
-    public ResponseEntity<ArticleResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<ArticleResponse> findById(@PathVariable long id) {
         Article article = blogService.findById(id);
 
         return ResponseEntity.ok()
@@ -48,7 +48,7 @@ public class BlogApiController {
     }
 
     @DeleteMapping("/api/articles/{id}")
-    public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteArticle(@PathVariable long id) {
         blogService.delete(id);
 
         return ResponseEntity.ok()
