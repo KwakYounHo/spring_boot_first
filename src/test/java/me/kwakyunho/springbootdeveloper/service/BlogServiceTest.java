@@ -83,4 +83,21 @@ class BlogServiceTest {
         assertThat(selectedArticle.getTitle()).isEqualTo(userRequest.getTitle());
         assertThat(selectedArticle.getContent()).isEqualTo(userRequest.getContent());
     }
+
+    @DisplayName("DELETE(/api/articles/id) : delete() -> 동작 확인")
+    @Test
+    public void deleteTest() {
+        // given
+        String title = "삭제를 위한 제목";
+        String content = "삭제를 위한 내용 입니다.";
+        AddArticleRequest data = new AddArticleRequest(title, content);
+        blogService.save(data);
+
+        // when
+        blogService.delete(1L);
+        List<Article> result = blogRepository.findAll();
+
+        // then
+        assertThat(result.size()).isZero();
+    }
 }
