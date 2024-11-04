@@ -3,6 +3,7 @@ package me.kwakyunho.springbootdeveloper.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.kwakyunho.springbootdeveloper.domain.Article;
 import me.kwakyunho.springbootdeveloper.dto.AddArticleRequest;
+import me.kwakyunho.springbootdeveloper.dto.UpdateArticleRequest;
 import me.kwakyunho.springbootdeveloper.repository.BlogRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -99,5 +100,30 @@ class BlogServiceTest {
 
         // then
         assertThat(result.size()).isZero();
+    }
+
+    @DisplayName("PUT(/api/articles/id): update()")
+    @Test
+    public void updateTest() throws Exception{
+        // given
+        String prevTitle = "title";
+        String prevContent = "content";
+
+        String newTitle = "글 수정 테스트";
+        String newContent = "해당 문구로 바뀌면 성공입니다.";
+
+        AddArticleRequest addArticleRequest = new AddArticleRequest(prevTitle, prevContent);
+        Article savedArticle = blogService.save(addArticleRequest);
+        UpdateArticleRequest request = new UpdateArticleRequest(newTitle, newContent);
+
+        // when
+        blogService.update(savedArticle.getId(), request);
+        Article result = blogService.findById(savedArticle.getId());
+
+        // then
+        assertThat(result.getTitle()).isNotEqualTo(prevTitle);
+        assertThat(result.getContent()).isNotEqualTo(prevContent);
+        assertThat(result.getTitle()).isEqualTo(newTitle);
+        assertThat(result.getContent()).isEqualTo(newContent);
     }
 }
