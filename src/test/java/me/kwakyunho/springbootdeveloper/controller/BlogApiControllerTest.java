@@ -133,18 +133,19 @@ class BlogApiControllerTest {
     public void updateArticleTest() throws Exception{
         // given
         AddArticleRequest previousArticle = new AddArticleRequest("title", "content");
-        blogService.save(previousArticle);
+        Article savedArticle = blogService.save(previousArticle);
 
         String updateTitle = "업데이트 된 타이틀";
         String updateContent = "해당 내용이 보이면 성공입니다.";
-        UpdateArticleRequest requestTarget = new UpdateArticleRequest(updateTitle, updateContent);
-        String request = objectMapper.writeValueAsString(requestTarget);
+
+        String url = "/api/articles/{id}";
+        UpdateArticleRequest request = new UpdateArticleRequest(updateTitle, updateContent);
 
         // when
         ResultActions result = mockMvc
-                .perform(put("/api/articles/1")
+                .perform(put(url, savedArticle.getId())
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(request)
+                        .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON));
 
         // then
