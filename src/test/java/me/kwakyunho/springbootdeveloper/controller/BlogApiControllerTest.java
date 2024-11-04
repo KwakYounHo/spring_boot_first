@@ -3,6 +3,7 @@ package me.kwakyunho.springbootdeveloper.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.kwakyunho.springbootdeveloper.domain.Article;
 import me.kwakyunho.springbootdeveloper.dto.AddArticleRequest;
+import me.kwakyunho.springbootdeveloper.dto.UpdateArticleRequest;
 import me.kwakyunho.springbootdeveloper.repository.BlogRepository;
 import me.kwakyunho.springbootdeveloper.service.BlogService;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -75,7 +77,7 @@ class BlogApiControllerTest {
         result
                 .andExpect(status().isCreated());
 
-        List<Article> articles = blogRepository.findAll();
+        List<Article> articles = blogService.findAll();
 
         assertThat(articles.size()).isEqualTo(1);
         assertThat(articles.get(0).getTitle()).isEqualTo(title);
@@ -124,5 +126,31 @@ class BlogApiControllerTest {
 
         // then
         assertThat(result).isEmpty();
+    }
+
+    @DisplayName("PUT(api/articles/{id} : updateArticle -> Article")
+    @Test
+    public void updateArticleTest() throws Exception{
+        // given
+        AddArticleRequest previousArticle = new AddArticleRequest("title", "content");
+        blogService.save(previousArticle);
+
+        String updateTitle = "업데이트 된 타이틀";
+        String updateContent = "해당 내용이 보이면 성공입니다.";
+        UpdateArticleRequest requestTarget = new UpdateArticleRequest(updateTitle, updateContent);
+        String request = objectMapper.writeValueAsString(requestTarget);
+
+        // when
+        ResultActions result = mockMvc
+                .perform(put("/api/articles/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(request)
+                        .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value(updateTitle))
+                .andExpect(jsonPath("$.content").value(updateContent));
     }
 }
