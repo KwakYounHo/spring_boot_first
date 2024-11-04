@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -104,10 +105,14 @@ class BlogApiControllerTest {
         // then
         result
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value(request1.getTitle()))
-                .andExpect(jsonPath("$[1].title").value(request2.getTitle()))
-                .andExpect(jsonPath("$[2].title").value(request3.getTitle()))
-                .andExpect(jsonPath("$.length()").value(3));
+//                .andExpect(jsonPath("$[0].title").value(request1.getTitle()))
+//                .andExpect(jsonPath("$[1].title").value(request2.getTitle()))
+//                .andExpect(jsonPath("$[2].title").value(request3.getTitle()))
+//                .andExpect(jsonPath("$.length()").value(3))
+
+                .andExpect(jsonPath("$.size()").value(3))
+                .andExpect(jsonPath("$[*].title", contains(request1.getTitle(), request2.getTitle(), request3.getTitle())))
+                .andExpect(jsonPath("$[*].content", contains(request1.getContent(), request2.getContent(), request3.getContent())));
     }
 
     @DisplayName("DELETE(api/articles/{id} : delete() -> void")
